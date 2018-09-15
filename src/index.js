@@ -1,26 +1,28 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 import AppRouter from "./routers/AppRouter";
+import configureStore from "./redux/store/configureStore";
+
+import "react-dates/lib/css/_datepicker.css";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
-import ReduxStore from "./playround/redux101";
 
-ReduxStore.subscribe(() => {
-  console.log(ReduxStore.getState());
-});
-ReduxStore.dispatch({
-  type: "INCREMENT"
-});
-ReduxStore.dispatch({
-  type: "INCREMENT"
-});
+import { addExpense } from "./redux/actions/expenses";
+const store = configureStore(); // opened the redux store
 
-ReduxStore.dispatch({
-  type: "RESET"
-});
+store.dispatch(addExpense({ description: "Water Bill" }));
+store.dispatch(addExpense({ description: "Gas Bill", createdAt: 1000 }));
+store.dispatch(addExpense({ description: "Rent", amount: 100000 }));
 
-ReduxStore.dispatch({
-  type: "DECREMENT"
-});
-ReactDOM.render(<AppRouter />, document.getElementById("root"));
+console.log(store.getState());
+
+const app = (
+  // served all components in the app with the store
+  <Provider store={store}>
+    <AppRouter />
+  </Provider>
+);
+
+ReactDOM.render(app, document.getElementById("root"));
 registerServiceWorker();
